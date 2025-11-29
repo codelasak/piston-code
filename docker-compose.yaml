@@ -13,24 +13,27 @@ services:
     volumes:
       - piston_packages:/piston/packages
       - piston_jobs:/piston/jobs
+      - ./install-runtimes.sh:/install-runtimes.sh:ro
     tmpfs:
       - '/tmp:exec'
     environment:
       - PISTON_LOGLEVEL=info
+      - PISTON_MAX_PROCESS_COUNT=256
+      - PISTON_MAX_OPEN_FILES=2048
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:2000/api/v2/runtimes"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 120s
+      start_period: 60s
     deploy:
       resources:
         limits:
           cpus: '1.5'
-          memory: 3G
-        reservations:
-          cpus: '1'
           memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
 
 volumes:
   piston_packages:
