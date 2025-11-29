@@ -8,19 +8,14 @@ WORKDIR /piston-build
 RUN git clone https://github.com/engineer-man/piston.git . && \
     cd cli && npm install && cd ..
 
-# Start the Piston API in the background
-RUN piston start &
-SLEEP 10
-
-# Install runtimes using the CLI
-# Python
-RUN node /piston-build/cli/index.js ppman install python
-
-# GCC (C/C++)
-RUN node /piston-build/cli/index.js ppman install gcc
-
-# Node.js (JavaScript)
-RUN node /piston-build/cli/index.js ppman install node
+# Install runtimes using the CLI in a single RUN command
+# This approach starts piston, waits, installs runtimes, then stops it
+RUN piston start & \
+    sleep 15 && \
+    node /piston-build/cli/index.js ppman install python && \
+    node /piston-build/cli/index.js ppman install gcc && \
+    node /piston-build/cli/index.js ppman install node && \
+    pkill -f piston || true
 
 # Clean up build artifacts
 RUN rm -rf /piston-build
