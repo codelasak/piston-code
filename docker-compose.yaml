@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   piston:
-    image: ghcr.io/engineer-man/piston:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: piston_api
     restart: always
     privileged: true
@@ -20,15 +22,15 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 120s
     deploy:
       resources:
         limits:
-          cpus: '3'
-          memory: 12G
+          cpus: '1.5'
+          memory: 3G
         reservations:
-          cpus: '2'
-          memory: 8G
+          cpus: '1'
+          memory: 2G
 
 volumes:
   piston_packages:
