@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  piston:
+    image: ghcr.io/engineer-man/piston:latest
+    container_name: piston_api
+    restart: always
+    privileged: true
+    ports:
+      - '2000:2000'
+    volumes:
+      - piston_packages:/piston/packages
+      - piston_jobs:/piston/jobs
+    tmpfs:
+      - '/tmp:exec'
+    environment:
+      - PISTON_LOGLEVEL=info
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2000/api/v2/runtimes"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 12G
+        reservations:
+          cpus: '2'
+          memory: 8G
+
+volumes:
+  piston_packages:
+    driver: local
+  piston_jobs:
+    driver: local
